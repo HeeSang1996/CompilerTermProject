@@ -4,7 +4,7 @@
 #return은 bool값
 #클래스에 합쳐줄수 있니?
 #동작은 잘 하는거 같다
-def isFloat(token):
+def isFLOAT(token):
     #string인 token에서 한글자씩 input
     state = ["T0","T1","T2","T3","T4","T5","T6","T7","T8","T9"]
     recentState = state[0]
