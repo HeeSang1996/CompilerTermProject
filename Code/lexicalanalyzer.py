@@ -178,19 +178,19 @@ class LexicalAnalyzer(object):
                 elif input in self.NON_ZERO:
                     recentState = state[3]
                 else:
-                    None, False, char
+                    return None, False, char
             elif recentState == state[1]:
                 if input in self.ZERO:
                     recentState = state[2]
                 elif input in self.NON_ZERO:
                     recentState = state[3]
                 else:
-                    None, False, char
+                    return None, False, char
             elif recentState == state[2]:
                 if input == ".":
                     recentState = state[4]
                 else:
-                    None, False, char
+                    return None, False, char
             elif recentState == state[3]:
                 if input in self.ZERO:
                     recentState = state[5]
@@ -199,14 +199,14 @@ class LexicalAnalyzer(object):
                 elif input in self.NON_ZERO:
                     recentState = state[6]
                 else:
-                    None, False, char
+                    return None, False, char
             elif recentState == state[4]:
                 if input in self.ZERO:
                     recentState = state[7]
                 elif input in self.NON_ZERO:
                     recentState = state[8]
                 else:
-                    None, False, char
+                    return None, False, char
             elif recentState == state[5]:
                 if input in self.ZERO:
                     recentState = state[5]
@@ -215,7 +215,7 @@ class LexicalAnalyzer(object):
                 elif input in self.NON_ZERO:
                     recentState = state[6]
                 else:
-                    None, False, char
+                    return None, False, char
             elif recentState == state[6]:
                 if input in self.ZERO:
                     recentState = state[5]
@@ -224,28 +224,28 @@ class LexicalAnalyzer(object):
                 elif input in self.NON_ZERO:
                     recentState = state[6]
                 else:
-                    None, False, char
+                    return None, False, char
             elif recentState == state[7]:
                 if input in self.ZERO:
                     recentState = state[9]
                 elif input in self.NON_ZERO:
                     recentState = state[8]
                 else:
-                    None, False, char
+                    return None, False, char
             elif recentState == state[8]:
                 if input in self.ZERO:
                     recentState = state[9]
                 elif input in self.NON_ZERO:
                     recentState = state[8]
                 else:
-                    None, False, char
+                    return None, False, char
             elif recentState == state[9]:
                 if input in self.ZERO:
                     recentState = state[9]
                 elif input in self.NON_ZERO:
                     recentState = state[8]
                 else:
-                    None, False, char
+                    return None, False, char
         if recentState == state[7] or recentState == state[8]:
             return input_string, True, char
         else:
