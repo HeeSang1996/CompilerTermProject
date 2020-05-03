@@ -16,7 +16,7 @@ class LexicalAnalyzer(object):
     MERGE = BRACE + PAREN + TERM + COMMA + OPERATOR + COMPARISON
     LETTER = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q,' 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', \
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-    SYMBOL = ['&', '|', '+', '-', '/', '<', '>', '"', '.', '_', '!'] + BRACE + PAREN + ASSIGN + TERM + COMMA
+    SYMBOL = ['&', '|', '+', '-', '*', '/', '<', '>', '"', '.', '_', '!'] + BRACE + PAREN + ASSIGN + TERM + COMMA
     ZERO = ['0']
     NON_ZERO = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
     DIGIT = ZERO + NON_ZERO
@@ -49,9 +49,6 @@ class LexicalAnalyzer(object):
                 input_string = input_string + char
                 char = self.input_stream.read(1)
 
-        if char not in self.WHITESPACE + self.BRACE + self.PAREN + self.ASSIGN:
-            input_string = input_string + char
-            char = ""
 
         # Analyze
         for c in input_string:
