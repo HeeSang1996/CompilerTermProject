@@ -5,7 +5,7 @@ class LexicalAnalyzer(object):
     VARIABLE = ['int', 'float','char', 'bool']
     KEYWORD = ['if', 'else', 'while', 'for', 'return']
     LOGIC = ['true', 'false']
-    OPERATOR = ['+', '-', '*', '/', '<<', '>>', '&', '|']
+    OPERATOR = ['-', '+', '*', '/', '<<', '>>', '&', '|']
     COMPARISON = ['<', '>', '==', '!=', '<=', '>=']
     WHITESPACE = ['\t', '\n', ' ']
     BRACE = ['{', '}']
@@ -13,7 +13,7 @@ class LexicalAnalyzer(object):
     ASSIGN = ['=']
     TERM = [';']
     COMMA = [',']
-    MERGE = BRACE + PAREN + TERM + COMMA + OPERATOR + COMPARISON
+    MERGE = BRACE + PAREN + TERM + COMMA + OPERATOR[1:] + COMPARISON
     LETTER = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q,' 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', \
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     SYMBOL = ['&', '|', '+', '-', '*', '/', '<', '>', '"', '.', '_', '!'] + BRACE + PAREN + ASSIGN + TERM + COMMA
@@ -249,11 +249,6 @@ class LexicalAnalyzer(object):
             return None, False, char
 
 
-
-
-
-
-
     def run(self):
         flag = True
         line_num = 1
@@ -294,48 +289,70 @@ class LexicalAnalyzer(object):
                 while (c in self.LETTER):
                     sub_string = sub_string + c
                     c = self.input_stream.read(1)
-                if sub_string in self.VARIABLE + self.KEYWORD + self.LOGIC:
-                    symbol_table.append(sub_string)
+                if sub_string in self.VARIABLE:
+                    symbol_table.append(['VARIABLE', sub_string])
+                elif sub_string in self.KEYWORD:
+                    symbol_table.append(['KEYWORD', sub_string])
+                elif sub_string in self.LOGIC:
+                    symbol_table.append(['LOGIC', sub_string])
+                sub_string = ""
+                flag = False
+                continue
+
+            # Subtract
+            if sub_string in ['-']:
+                if ('INT' or 'FLOAT' or 'ID') in symbol_table[-1]:
+                    symbol_table.append(['OPERATOR', sub_string])
                     sub_string = ""
-                    flag = False
                     continue
-                
 
             # BRACE, PAREN, TERM, COMMA, OPERATOR, COMPARISON
             if sub_string in self.MERGE:
+                #######
                 if sub_string in ['<', '>']:
                     if c == "":
                         c = self.input_stream.read(1)
                         flag = False
                     if c == sub_string:
-                        symbol_table.append(sub_string + c)
+                        symbol_table.append(['OPERATOR', sub_string + c])
                         sub_string = ""
                         c = ""
                         flag = True
                         continue
                     elif sub_string+c in self.COMPARISON:
-                        symbol_table.append(sub_string + c)
+                        symbol_table.append(['COMPARISON', sub_string + c])
                         sub_string = ""
                         c = ""
                         flag = True
                         continue
 
-                symbol_table.append(sub_string)
+                if sub_string in self.BRACE:
+                    symbol_table.append(['BRACE', sub_string])
+                elif sub_string in self.PAREN:
+                    symbol_table.append(['PAREN', sub_string])
+                elif sub_string in self.TERM:
+                    symbol_table.append(['TERM', sub_string])
+                elif sub_string in self.COMMA:
+                    symbol_table.append(['COMMA', sub_string])
+                elif sub_string in self.OPERATOR:
+                    symbol_table.append(['OPERATOR', sub_string])
+                elif sub_string in self.COMPARISON:
+                    symbol_table.append(['COMPARISON', sub_string])
                 sub_string = ""
                 continue
 
-            # ASSIGN, OPERATOR
+            # ASSIGN, COMPARISON
             if sub_string in self.ASSIGN:
                 c = self.input_stream.read(1)
-                # Comparison ==
+                # COMPARISON ==
                 if sub_string + c in self.COMPARISON:
-                    symbol_table.append(sub_string + c)
+                    symbol_table.append(['COMPARISON', sub_string + c])
                     sub_string = ""
                     c = ""
                     continue
                 # ASSIGN
                 else:
-                    symbol_table.append(sub_string)
+                    symbol_table.append(['ASSIGN', sub_string])
                     sub_string = ""
                     flag = False
                     continue
@@ -361,7 +378,10 @@ class LexicalAnalyzer(object):
                     flag_int = True
 
                 if fact:
-                    symbol_table.append(sub_string)
+                    if flag_int:
+                        symbol_table.append(['INT', sub_string])
+                    else:
+                        symbol_table.append(['FLOAT', sub_string])
                     sub_string = ""
                     if c != "":
                         flag = False
@@ -376,12 +396,11 @@ class LexicalAnalyzer(object):
                         print("Line", line_num, ": Wrong input stream - Float")
                     exit()
 
-
             # ID
             if sub_string[0] in self.LETTER + ['_']:
                 sub_string, fact, c = self.is_id(sub_string, c)
                 if fact:
-                    symbol_table.append(sub_string)
+                    symbol_table.append(['ID', sub_string])
                     sub_string = ""
                     if c != "":
                         flag = False
@@ -397,7 +416,7 @@ class LexicalAnalyzer(object):
             if sub_string[0] == '"':
                 sub_string, fact, c = self.is_string(sub_string, c)
                 if fact:
-                    symbol_table.append(sub_string)
+                    symbol_table.append(['LITERAL', sub_string])
                     sub_string = ""
                     if c != "":
                         flag = False
@@ -409,16 +428,10 @@ class LexicalAnalyzer(object):
                     print("Line", line_num, ": Wrong input stream - String")
                     exit()
 
-                    
-        print(symbol_table)
+        for i in symbol_table:
+            print(i)
 
-        return 0
-
-        #while (True):
-        #    # Check the alphabet
-        #    # Check the whitespace
-        #    sub_string = 
-        #    if ()
+        return symbol_table
 
 
 if __name__ == "__main__":
