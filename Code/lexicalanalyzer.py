@@ -306,15 +306,18 @@ class LexicalAnalyzer(object):
                 if sub_string in ['<', '>']:
                     if c == "":
                         c = self.input_stream.read(1)
+                        flag = False
                     if c == sub_string:
                         symbol_table.append(sub_string + c)
                         sub_string = ""
                         c = ""
+                        flag = True
                         continue
                     elif sub_string+c in self.COMPARISON:
                         symbol_table.append(sub_string + c)
                         sub_string = ""
                         c = ""
+                        flag = True
                         continue
 
                 symbol_table.append(sub_string)
