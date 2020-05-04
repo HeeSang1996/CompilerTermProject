@@ -291,13 +291,19 @@ class LexicalAnalyzer(object):
                     c = self.input_stream.read(1)
                 if sub_string in self.VARIABLE:
                     symbol_table.append(['VARIABLE', sub_string])
+                    sub_string = ""
+                    flag = False
+                    continue
                 elif sub_string in self.KEYWORD:
                     symbol_table.append(['KEYWORD', sub_string])
+                    sub_string = ""
+                    flag = False
+                    continue
                 elif sub_string in self.LOGIC:
                     symbol_table.append(['LOGIC', sub_string])
-                sub_string = ""
-                flag = False
-                continue
+                    sub_string = ""
+                    flag = False
+                    continue
 
             # Subtract
             if sub_string in ['-']:
