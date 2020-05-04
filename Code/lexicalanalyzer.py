@@ -359,7 +359,7 @@ class LexicalAnalyzer(object):
 
             # INTEGER & FLOAT
             if sub_string in self.DIGIT + ['-']:
-                symbol = self.DIGIT + ['-', '.']
+                symbol = self.DIGIT + ['.']
                 if c == "":
                     c = self.input_stream.read(1)
 
