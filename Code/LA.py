@@ -2,6 +2,7 @@ import sys
 
 class LexicalAnalyzer(object):
 
+    # Token Definition
     VARIABLE = ['int', 'float','char', 'bool']
     KEYWORD = ['if', 'else', 'while', 'for', 'return']
     LOGIC = ['true', 'false']
@@ -14,6 +15,8 @@ class LexicalAnalyzer(object):
     TERM = [';']
     COMMA = [',']
     MERGE = BRACE + PAREN + TERM + COMMA + OPERATOR[1:] + COMPARISON
+
+    # Alphabet Definition
     LETTER = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q,' 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', \
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     SYMBOL = ['&', '|', '+', '-', '*', '/', '<', '>', '"', '.', '_', '!'] + BRACE + PAREN + ASSIGN + TERM + COMMA
@@ -22,14 +25,17 @@ class LexicalAnalyzer(object):
     DIGIT = ZERO + NON_ZERO
     ALPHABET = LETTER + DIGIT + SYMBOL + WHITESPACE
 
+    # input text file
     input_stream = None
 
     def __init__(self):
         pass
 
     def __init__(self, file):
+        # Get text file
         self.input_stream = file
 
+    # FLOAT DFA
     def is_float(self, input_string, char):
         state = ["T0", "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9"]
         recentState = state[0]
@@ -116,6 +122,7 @@ class LexicalAnalyzer(object):
         else:
             return None, False, char
 
+    # INT DFA
     def is_int(self, input_string, char):
         state = ["T0", "T1", "T2", "T3", "T4", "T5"]
         recentState = state[0]
@@ -163,6 +170,7 @@ class LexicalAnalyzer(object):
         else:
             return None, False, char
 
+    # Literal DFA
     def is_string(self, input_string, char):
         sub_string = ""
         symbol = self.LETTER + self.ZERO + self.NON_ZERO + [' ', '"']
@@ -199,6 +207,7 @@ class LexicalAnalyzer(object):
         else:
             return sub_string, False, char
 
+    # ID DFA
     def is_id(self, input_string, char):
         sub_string = ""
         symbol = self.LETTER + self.ZERO + self.NON_ZERO + ['_']
@@ -236,6 +245,7 @@ class LexicalAnalyzer(object):
         else:
             return sub_string, False, char
 
+    # Run Lexical Analyzer
     def run(self):
         flag = True
         line_num = 1
@@ -243,14 +253,16 @@ class LexicalAnalyzer(object):
         symbol_table = []
 
         while (True):
+            # Check the character is read or not
             if flag:
                 c = self.input_stream.read(1)
                 flag = True
 
+            # EOF
             if c == "":
                 break
 
-            # Input alphabet testing
+            # Test the character is in the alphabet
             if c not in self.ALPHABET:
                 print("Wrong character, Line: ", line_num)
                 exit()
@@ -261,11 +273,12 @@ class LexicalAnalyzer(object):
                 c = ""; flag = True
                 continue
 
-            # Ignore thre white space
+            # Ignore the white space
             if c in self.WHITESPACE:
                 c = ""; flag = True
                 continue
 
+            # Attach the character to sub_string
             sub_string = sub_string + c
             c = ""; flag = True
 
