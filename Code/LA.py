@@ -35,6 +35,92 @@ class LexicalAnalyzer(object):
         # Get text file
         self.input_stream = file
 
+    # ID DFA
+    def is_id(self, input_string, char):
+        sub_string = ""
+        symbol = self.LETTER + self.ZERO + self.NON_ZERO + ['_']
+        i = 0; j = 0
+        final = [1, 2, 3, 4, 5, 6]
+        transition_table = [[1, -1, -1, 2], [3, 4, 5, 6], [3, 4, 5, 6], [3, 4, 5, 6], \
+                            [3, 4, 5, 6], [3, 4, 5, 6], [3, 4, 5, 6]]
+
+        if char == "":
+            char = self.input_stream.read(1)
+
+        # Read string
+        while char in symbol:
+            input_string = input_string + char
+            char = self.input_stream.read(1)
+
+        # Analyze
+        for c in input_string:
+            if c in self.LETTER: j = 0
+            elif c in self.ZERO: j = 1
+            elif c in self.NON_ZERO: j = 2
+            elif c in ['_']: j = 3
+            else:
+                return sub_string, False, char
+
+            tmp_i = i
+            i = transition_table[i][j]
+            sub_string = sub_string + c
+
+            if i == -1:
+                return sub_string, False, char
+
+        if i in final:
+            return sub_string, True, char
+        else:
+            return sub_string, False, char
+
+    # INT DFA
+    def is_int(self, input_string, char):
+        state = ["T0", "T1", "T2", "T3", "T4", "T5"]
+        recentState = state[0]
+
+        for input in input_string:
+            if recentState == state[0]:
+                if input == "-":
+                    recentState = state[1]
+                elif input in self.ZERO:
+                    recentState = state[2]
+                elif input in self.NON_ZERO:
+                    recentState = state[3]
+                else:
+                    return None, False, char
+            elif recentState == state[1]:
+                if input in self.NON_ZERO:
+                    recentState = state[3]
+                else:
+                    return None, False, char
+            elif recentState == state[2]:
+                return None, False, char
+            elif recentState == state[3]:
+                if input in self.ZERO:
+                    recentState = state[4]
+                elif input in self.NON_ZERO:
+                    recentState = state[5]
+                else:
+                    return None, False, char
+            elif recentState == state[4]:
+                if input in self.ZERO:
+                    recentState = state[4]
+                elif input in self.NON_ZERO:
+                    recentState = state[5]
+                else:
+                    return None, False, char
+            elif recentState == state[5]:
+                if input in self.ZERO:
+                    recentState = state[4]
+                elif input in self.NON_ZERO:
+                    recentState = state[5]
+                else:
+                    return None, False, char
+        if recentState == state[2] or recentState == state[3] or recentState == state[4] or recentState == state[5]:
+            return input_string, True, char
+        else:
+            return None, False, char
+
     # FLOAT DFA
     def is_float(self, input_string, char):
         state = ["T0", "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9"]
@@ -122,54 +208,6 @@ class LexicalAnalyzer(object):
         else:
             return None, False, char
 
-    # INT DFA
-    def is_int(self, input_string, char):
-        state = ["T0", "T1", "T2", "T3", "T4", "T5"]
-        recentState = state[0]
-
-        for input in input_string:
-            if recentState == state[0]:
-                if input == "-":
-                    recentState = state[1]
-                elif input in self.ZERO:
-                    recentState = state[2]
-                elif input in self.NON_ZERO:
-                    recentState = state[3]
-                else:
-                    return None, False, char
-            elif recentState == state[1]:
-                if input in self.NON_ZERO:
-                    recentState = state[3]
-                else:
-                    return None, False, char
-            elif recentState == state[2]:
-                return None, False, char
-            elif recentState == state[3]:
-                if input in self.ZERO:
-                    recentState = state[4]
-                elif input in self.NON_ZERO:
-                    recentState = state[5]
-                else:
-                    return None, False, char
-            elif recentState == state[4]:
-                if input in self.ZERO:
-                    recentState = state[4]
-                elif input in self.NON_ZERO:
-                    recentState = state[5]
-                else:
-                    return None, False, char
-            elif recentState == state[5]:
-                if input in self.ZERO:
-                    recentState = state[4]
-                elif input in self.NON_ZERO:
-                    recentState = state[5]
-                else:
-                    return None, False, char
-        if recentState == state[2] or recentState == state[3] or recentState == state[4] or recentState == state[5]:
-            return input_string, True, char
-        else:
-            return None, False, char
-
     # Literal DFA
     def is_string(self, input_string, char):
         sub_string = ""
@@ -196,44 +234,6 @@ class LexicalAnalyzer(object):
             else:
                 return sub_string, False, char
 
-            i = transition_table[i][j]
-            sub_string = sub_string + c
-
-            if i == -1:
-                return sub_string, False, char
-
-        if i in final:
-            return sub_string, True, char
-        else:
-            return sub_string, False, char
-
-    # ID DFA
-    def is_id(self, input_string, char):
-        sub_string = ""
-        symbol = self.LETTER + self.ZERO + self.NON_ZERO + ['_']
-        i = 0; j = 0
-        final = [1, 2, 3, 4, 5, 6]
-        transition_table = [[1, -1, -1, 2], [3, 4, 5, 6], [3, 4, 5, 6], [3, 4, 5, 6], \
-                            [3, 4, 5, 6], [3, 4, 5, 6], [3, 4, 5, 6]]
-
-        if char == "":
-            char = self.input_stream.read(1)
-
-        # Read string
-        while char in symbol:
-            input_string = input_string + char
-            char = self.input_stream.read(1)
-
-        # Analyze
-        for c in input_string:
-            if c in self.LETTER: j = 0
-            elif c in self.ZERO: j = 1
-            elif c in self.NON_ZERO: j = 2
-            elif c in ['_']: j = 3
-            else:
-                return sub_string, False, char
-
-            tmp_i = i
             i = transition_table[i][j]
             sub_string = sub_string + c
 
@@ -437,9 +437,6 @@ class LexicalAnalyzer(object):
                     print("Line", line_num, ": Wrong input stream - String")
                     exit()
 
-        for i in symbol_table:
-            print(i)
-
         return symbol_table
 
 
@@ -464,3 +461,19 @@ if __name__ == "__main__":
     # Close the file
     f.close()
 
+    # Visualize the result
+    for i in symbol_table:
+        print(i[0], i[1])
+
+    # Open file for writing result
+    try:
+        f = open(file_name[:-2]+'.out', 'w')
+    except:
+        print("Fail to write file")
+        exit()
+
+    for i in symbol_table:
+        token = i[0]
+        lexeme = i[1]
+        f.writelines(token + ' ' + lexeme + '\n')
+    f.close()
