@@ -295,6 +295,10 @@ class LexicalAnalyzer(object):
                 if c == '_':
                     flag = False
                     continue
+                
+                if c in self.DIGIT:
+                    flag = False
+                    continue
 
                 if sub_string in self.VARIABLE:
                     symbol_table.append(['VARIABLE', sub_string])
