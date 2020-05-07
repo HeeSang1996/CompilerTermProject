@@ -354,6 +354,18 @@ class LexicalAnalyzer(object):
                         sub_string = ""; flag = True
                         continue
 
+                if sub_string == '!':
+                    if c == "":
+                        c = self.input_stream.read(1)
+                        flag = False
+                    if c == '=':
+                        symbol_table.append(['COMPARISON', sub_string + c])
+                        sub_string = ""; flag = True
+                        continue
+                    else:
+                        print("Wrong character, Line: ", line_num)
+                        exit()
+
                 if sub_string in self.BRACE:
                     symbol_table.append(['BRACE', sub_string])
                 elif sub_string in self.PAREN:
@@ -366,9 +378,6 @@ class LexicalAnalyzer(object):
                     symbol_table.append(['OPERATOR', sub_string])
                 elif sub_string in self.COMPARISON:
                     symbol_table.append(['COMPARISON', sub_string])
-                else:
-                    print("Wrong character, Line: ", line_num)
-                    exit()
                 sub_string = ""
                 continue
 
