@@ -404,9 +404,9 @@ class LexicalAnalyzer(object):
                         continue
                 else:
                     if flag_int:
-                        print("Line", line_num, ": Wrong input stream - Integer")
+                        print("Line", line_num, ": Wrong input stream")
                     else:
-                        print("Line", line_num, ": Wrong input stream - Float")
+                        print("Line", line_num, ": Wrong input stream")
                     exit()
 
             # ID
@@ -422,7 +422,7 @@ class LexicalAnalyzer(object):
                         flag = True
                         continue
                 else:
-                    print("Line", line_num, ": Wrong input stream - Identifier")
+                    print("Line", line_num, ": Wrong input stream")
                     exit()
 
             # String
@@ -438,7 +438,7 @@ class LexicalAnalyzer(object):
                         flag = True
                         continue
                 else:
-                    print("Line", line_num, ": Wrong input stream - String")
+                    print("Line", line_num, ": Wrong input stream")
                     exit()
 
         return symbol_table
