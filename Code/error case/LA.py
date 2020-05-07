@@ -264,7 +264,7 @@ class LexicalAnalyzer(object):
 
             # Test the character is in the alphabet
             if c not in self.ALPHABET:
-                print("Wrong character, Line: ", line_num)
+                print("Line", line_num, ": Wrong input stream")
                 exit()
 
             # Check the # of line
@@ -363,7 +363,7 @@ class LexicalAnalyzer(object):
                         sub_string = ""; flag = True
                         continue
                     else:
-                        print("Wrong character, Line: ", line_num)
+                        print("Line", line_num, ": Wrong input stream")
                         exit()
 
                 if sub_string in self.BRACE:

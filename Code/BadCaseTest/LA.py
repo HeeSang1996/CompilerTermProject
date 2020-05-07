@@ -340,7 +340,7 @@ class LexicalAnalyzer(object):
                     continue
 
             # BRACE, PAREN, TERM, COMMA, OPERATOR, COMPARISON
-            if sub_string in self.MERGE:
+            if sub_string in self.MERGE + ['!']:
                 if sub_string in ['<', '>']:
                     if c == "":
                         c = self.input_stream.read(1)
@@ -353,6 +353,18 @@ class LexicalAnalyzer(object):
                         symbol_table.append(['COMPARISON', sub_string + c])
                         sub_string = ""; flag = True
                         continue
+
+                if sub_string == '!':
+                    if c == "":
+                        c = self.input_stream.read(1)
+                        flag = False
+                    if c == '=':
+                        symbol_table.append(['COMPARISON', sub_string + c])
+                        sub_string = ""; flag = True
+                        continue
+                    else:
+                        print("Wrong character, Line: ", line_num)
+                        exit()
 
                 if sub_string in self.BRACE:
                     symbol_table.append(['BRACE', sub_string])
