@@ -345,7 +345,7 @@ class LexicalAnalyzer(object):
             # Subtract
             if sub_string in ['-']:
                 # if ('INT' or 'FLOAT' or 'ID') in symbol_table[-1]:
-                if ('INT' in symbol_table[-1]) or ('FLOAT' in symbol_table[-1]) or ('ID' in symbol_table[-1]):
+                if (len(symbol_table) != 0) and (('INT' in symbol_table[-1]) or ('FLOAT' in symbol_table[-1]) or ('ID' in symbol_table[-1])):
                     symbol_table.append(['OPERATOR', sub_string])
                     sub_string = ""
                     continue
