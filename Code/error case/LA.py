@@ -274,7 +274,6 @@ class LexicalAnalyzer(object):
 
                 for i in error_noti:
                     f.writelines(i)
-                f.writelines('\n')
                 f.close()
                 print(error_noti)
                 exit()
@@ -385,7 +384,6 @@ class LexicalAnalyzer(object):
 
                         for i in error_noti:
                             f.writelines(i)
-                        f.writelines('\n')
                         f.close()
                         print(error_noti)
                         exit()
@@ -449,7 +447,6 @@ class LexicalAnalyzer(object):
 
                     for i in error_noti:
                         f.writelines(i)
-                    f.writelines('\n')
                     f.close()
                     print(error_noti)
                     exit()
@@ -477,7 +474,6 @@ class LexicalAnalyzer(object):
 
                     for i in error_noti:
                         f.writelines(i)
-                    f.writelines('\n')
                     f.close()
                     print(error_noti)
                     exit()
@@ -505,7 +501,6 @@ class LexicalAnalyzer(object):
 
                     for i in error_noti:
                         f.writelines(i)
-                    f.writelines('\n')
                     f.close()
                     print(error_noti)
                     exit()
