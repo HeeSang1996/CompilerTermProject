@@ -266,7 +266,7 @@ class LexicalAnalyzer(object):
             if c not in self.ALPHABET:
                 error_noti = "Line" + str(line_num) + ": Wrong input stream"
                 # Open file for writing Error
-                 try:
+                try:
                     f = open(file_name[:-2]+'_error.out', 'w')
                 except:
                     print("Fail to write file")

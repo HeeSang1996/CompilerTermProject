@@ -264,7 +264,18 @@ class LexicalAnalyzer(object):
 
             # Test the character is in the alphabet
             if c not in self.ALPHABET:
-                print("Line", line_num, ": Wrong input stream")
+                error_noti = "Line" + str(line_num) + ": Wrong input stream"
+                # Open file for writing Error
+                try:
+                    f = open(file_name[:-2]+'_error.out', 'w')
+                except:
+                    print("Fail to write file")
+                    exit()
+
+                for i in error_noti:
+                    f.writelines(i + '\n')
+                f.close()
+                print(error_noti)
                 exit()
 
             # Check the # of line
@@ -363,7 +374,18 @@ class LexicalAnalyzer(object):
                         sub_string = ""; flag = True
                         continue
                     else:
-                        print("Line", line_num, ": Wrong input stream")
+                        error_noti = "Line" + str(line_num) + ": Wrong input stream"
+                        # Open file for writing Error
+                        try:
+                            f = open(file_name[:-2]+'_error.out', 'w')
+                        except:
+                            print("Fail to write file")
+                            exit()
+
+                        for i in error_noti:
+                            f.writelines(i + '\n')
+                        f.close()
+                        print(error_noti)
                         exit()
 
                 if sub_string in self.BRACE:
@@ -415,10 +437,18 @@ class LexicalAnalyzer(object):
                         flag = True
                         continue
                 else:
-                    if flag_int:
-                        print("Line", line_num, ": Wrong input stream")
-                    else:
-                        print("Line", line_num, ": Wrong input stream")
+                    error_noti = "Line" + str(line_num) + ": Wrong input stream"
+                    # Open file for writing Error
+                    try:
+                        f = open(file_name[:-2]+'_error.out', 'w')
+                    except:
+                        print("Fail to write file")
+                        exit()
+
+                    for i in error_noti:
+                        f.writelines(i + '\n')
+                    f.close()
+                    print(error_noti)
                     exit()
 
             # ID
@@ -434,7 +464,18 @@ class LexicalAnalyzer(object):
                         flag = True
                         continue
                 else:
-                    print("Line", line_num, ": Wrong input stream")
+                    error_noti = "Line" + str(line_num) + ": Wrong input stream"
+                    # Open file for writing Error
+                    try:
+                        f = open(file_name[:-2]+'_error.out', 'w')
+                    except:
+                        print("Fail to write file")
+                        exit()
+
+                    for i in error_noti:
+                        f.writelines(i + '\n')
+                    f.close()
+                    print(error_noti)
                     exit()
 
             # String
@@ -450,7 +491,18 @@ class LexicalAnalyzer(object):
                         flag = True
                         continue
                 else:
-                    print("Line", line_num, ": Wrong input stream")
+                    error_noti = "Line" + str(line_num) + ": Wrong input stream"
+                    # Open file for writing Error
+                    try:
+                        f = open(file_name[:-2]+'_error.out', 'w')
+                    except:
+                        print("Fail to write file")
+                        exit()
+
+                    for i in error_noti:
+                        f.writelines(i + '\n')
+                    f.close()
+                    print(error_noti)
                     exit()
 
         return symbol_table
