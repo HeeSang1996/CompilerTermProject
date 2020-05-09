@@ -261,12 +261,10 @@ class LexicalAnalyzer(object):
                 if input in self.ZERO:
                     recentState = state[9]
                     sub_string2 = sub_string2 + input
-                    sub_string1 = sub_string2
                     if read_flag: input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[8]
                     sub_string2 = sub_string2 + input
-                    sub_string1 = sub_string2
                     if read_flag: input = self.input_stream.read(1)
                 else:
                     return sub_string1, True, input
