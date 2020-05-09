@@ -319,7 +319,7 @@ class LexicalAnalyzer(object):
                 else:
                     buf = sub_string2.replace(sub_string1, "", 1)
                     return sub_string1, False, (buf+input)
-            if input not in (self.DIGIT + ['.']):
+            if input not in (self.DIGIT + ['.', '-']):
                 break
         if recentState == state[7] or recentState == state[8]:
             sub_string1 = sub_string2
@@ -468,7 +468,6 @@ class LexicalAnalyzer(object):
                 if (len(symbol_table) != 0) and (('INT' in symbol_table[-1]) or \
                     ('FLOAT' in symbol_table[-1]) or ('ID' in symbol_table[-1]) or (')' in symbol_table[-1])):
                     symbol_table.append(['OPERATOR', sub_string])
-                    print(symbol_table[-1])
                     sub_string = ""
                     continue
 
@@ -532,23 +531,39 @@ class LexicalAnalyzer(object):
                 sub_string, fact, c = self.is_int(sub_string, c)
 
                 if fact:
-                    symbol_table.append(['INT', sub_string])
-                    sub_string = ""
-                else:
-                    if sub_string=='-':
-                        symbol_table.append(['OPERATOR', sub_string])
+                    if c == ".":
+                        sub_string = sub_string + c
+                        c = ""
+                        flag = True
+                    else:
+                        symbol_table.append(['INT', sub_string])
                         sub_string = ""
+
+                    if sub_string == "":
+                        if c != "":
+                            flag = False
+                            continue
+                        else:
+                            flag = True
+                            continue
+                else:
                     if c == ".":
                         sub_string = sub_string+c
                         c=""
                         flag = True
-                if sub_string == "":
-                    if c != "":
-                        flag = False
-                        continue
-                    else:
+                    if sub_string=='-':
+                        sub_string = sub_string + c
+                        c=""
                         flag = True
-                        continue
+                        '''
+                    if sub_string=='-':
+                        symbol_table.append(['OPERATOR', sub_string])
+                        sub_string = ""'''
+                    if sub_string == "":
+                        if c != "":
+                            flag = False
+                        else:
+                            flag = True
 
 
             # FLOAT
@@ -562,10 +577,14 @@ class LexicalAnalyzer(object):
                     if sub_string=='-':
                         symbol_table.append(['OPERATOR', sub_string])
                         sub_string = ""
-                    elif len(c) > 0:
+                    elif (len(c) > 0) and (len(sub_string)!=0):
                         symbol_table.append(['FLOAT', sub_string])
                         sub_string = c
                         c=""
+                    elif (c == '.') or (sub_string == '.'):
+                        error_noti = "Line" + str(line_num) + ": Wrong input stream"
+                        print(error_noti)
+                        exit()
                     else:
                         symbol_table.append(['FLOAT', sub_string])
                         sub_string = ""
