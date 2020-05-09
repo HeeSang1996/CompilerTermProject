@@ -78,30 +78,41 @@ class LexicalAnalyzer(object):
         state = ["T0", "T1", "T2", "T3", "T4", "T5"]
         recentState = state[0]
 
+        buf_string=input_string
         sub_string=""
-        input = input_string
+        read_flag = True
+        if len(input_string) == 1:
+            input = input_string
 
         while(True):
+            if len(input_string) > 1:
+                if len(buf_string)!=0:
+                    input = buf_string[0]
+                    buf_string = buf_string[1:]
+                    read_flag = False
+                if len(buf_string)==0:
+                    read_flag = True
+
             if recentState == state[0]:
                 if input == "-":
                     recentState = state[1]
                     sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    if read_flag: input = self.input_stream.read(1)
                 elif input in self.ZERO:
                     recentState = state[2]
                     sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    if read_flag: input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[3]
                     sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    if read_flag: input = self.input_stream.read(1)
                 else:
                     return sub_string, False, input
             elif recentState == state[1]:
                 if input in self.NON_ZERO:
                     recentState = state[3]
                     sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    if read_flag: input = self.input_stream.read(1)
                 else:
                     return sub_string, False, input
             elif recentState == state[2]:
@@ -110,37 +121,39 @@ class LexicalAnalyzer(object):
                 if input in self.ZERO:
                     recentState = state[4]
                     sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    if read_flag: input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[5]
                     sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    if read_flag: input = self.input_stream.read(1)
                 else:
                     return sub_string, True, input
             elif recentState == state[4]:
                 if input in self.ZERO:
                     recentState = state[4]
                     sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    if read_flag: input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[5]
                     sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    if read_flag: input = self.input_stream.read(1)
                 else:
                     return sub_string, True, input
             elif recentState == state[5]:
                 if input in self.ZERO:
                     recentState = state[4]
                     sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    if read_flag: input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[5]
                     sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    if read_flag: input = self.input_stream.read(1)
                 else:
                     return sub_string, True, input
             if input not in self.DIGIT:
                 break
+        if input == ".":
+            return sub_string, False, input
         if recentState == state[2] or recentState == state[3] or recentState == state[4] or recentState == state[5]:
             return sub_string, True, input
         else:
@@ -286,7 +299,6 @@ class LexicalAnalyzer(object):
                 if input in self.ZERO:
                     recentState = state[9]
                     sub_string2 = sub_string2 + input
-                    sub_string1 = sub_string2
                     if read_flag: input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[8]
@@ -371,7 +383,7 @@ class LexicalAnalyzer(object):
                 break
 
             # Test the character is in the alphabet
-            if c not in self.ALPHABET:
+            if (c not in self.ALPHABET) and (sub_string == ""):
                 error_noti = "Line" + str(line_num) + ": Wrong input stream"
                 # Open file for writing Error
                 try:
@@ -514,7 +526,7 @@ class LexicalAnalyzer(object):
                 continue
 
             # INTEGER
-            if sub_string in self.DIGIT + ['-']:
+            if sub_string[0] in self.DIGIT + ['-']:
                 symbol = self.DIGIT
 
                 sub_string, fact, c = self.is_int(sub_string, c)
@@ -526,12 +538,17 @@ class LexicalAnalyzer(object):
                     if sub_string=='-':
                         symbol_table.append(['OPERATOR', sub_string])
                         sub_string = ""
-                if c != "":
-                    flag = False
-                    continue
-                else:
-                    flag = True
-                    continue
+                    if c == ".":
+                        sub_string = sub_string+c
+                        c=""
+                        flag = True
+                if sub_string == "":
+                    if c != "":
+                        flag = False
+                        continue
+                    else:
+                        flag = True
+                        continue
 
 
             # FLOAT
@@ -548,23 +565,17 @@ class LexicalAnalyzer(object):
                     elif len(c) > 0:
                         symbol_table.append(['FLOAT', sub_string])
                         sub_string = c
-                        c = ""
-                        flag = True
-                        continue
+                        c=""
                     else:
                         symbol_table.append(['FLOAT', sub_string])
                         sub_string = ""
                         continue
-                    '''else:
-                        error_noti = "Line" + str(line_num) + ": Wrong input stream"
-                        print(error_noti)
-                        exit()'''
 
-                if c != "":
-                    flag = False
+                if (c == "") and (sub_string == ""):
+                    flag = True
                     continue
                 else:
-                    flag = True
+                    flag = False
                     continue
 
             # ID
