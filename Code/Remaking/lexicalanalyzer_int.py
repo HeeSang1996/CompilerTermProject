@@ -78,48 +78,73 @@ class LexicalAnalyzer(object):
         state = ["T0", "T1", "T2", "T3", "T4", "T5"]
         recentState = state[0]
 
-        for input in input_string:
+        sub_string=""
+        input = input_string
+
+        while(True):
             if recentState == state[0]:
                 if input == "-":
                     recentState = state[1]
+                    sub_string = sub_string + input
+                    input = self.input_stream.read(1)
                 elif input in self.ZERO:
                     recentState = state[2]
+                    sub_string = sub_string + input
+                    input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[3]
+                    sub_string = sub_string + input
+                    input = self.input_stream.read(1)
                 else:
-                    return None, False, char
+                    return sub_string, False, input
             elif recentState == state[1]:
                 if input in self.NON_ZERO:
                     recentState = state[3]
+                    sub_string = sub_string + input
+                    input = self.input_stream.read(1)
                 else:
-                    return None, False, char
+                    return sub_string, False, input
             elif recentState == state[2]:
-                return None, False, char
+                return sub_string, True, input
             elif recentState == state[3]:
                 if input in self.ZERO:
                     recentState = state[4]
+                    sub_string = sub_string + input
+                    input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[5]
+                    sub_string = sub_string + input
+                    input = self.input_stream.read(1)
                 else:
-                    return None, False, char
+                    return sub_string, True, input
             elif recentState == state[4]:
                 if input in self.ZERO:
                     recentState = state[4]
+                    sub_string = sub_string + input
+                    input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[5]
+                    sub_string = sub_string + input
+                    input = self.input_stream.read(1)
                 else:
-                    return None, False, char
+                    return sub_string, True, input
             elif recentState == state[5]:
                 if input in self.ZERO:
                     recentState = state[4]
+                    sub_string = sub_string + input
+                    input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[5]
+                    sub_string = sub_string + input
+                    input = self.input_stream.read(1)
                 else:
-                    return None, False, char
+                    return sub_string, True, input
+            if input not in self.DIGIT:
+                break
         if recentState == state[2] or recentState == state[3] or recentState == state[4] or recentState == state[5]:
-            return input_string, True, char
+            return sub_string, True, input
         else:
-            return None, False, char
+            return sub_string, False, input
 
     # FLOAT DFA
     def is_float(self, input_string, char):
@@ -405,7 +430,27 @@ class LexicalAnalyzer(object):
                 sub_string = ""
                 continue
 
-            # INTEGER & FLOAT
+            # INTEGER
+            if sub_string in self.DIGIT + ['-']:
+                symbol = self.DIGIT
+
+                sub_string, fact, c = self.is_int(sub_string, c)
+
+                if fact:
+                    symbol_table.append(['INT', sub_string])
+                    sub_string = ""
+                else:
+                    if sub_string=='-':
+                        symbol_table.append(['OPERATOR', sub_string])
+                        sub_string = ""
+                if c != "":
+                    flag = False
+                    continue
+                else:
+                    flag = True
+                    continue
+
+            '''# INTEGER & FLOAT
             if sub_string in self.DIGIT + ['-', '.']:
                 symbol = self.DIGIT + ['.']
                 if c == "":
@@ -449,7 +494,7 @@ class LexicalAnalyzer(object):
                     f.close()
                     print(error_noti)
                     exit()
-
+'''
             # ID
             if sub_string[0] in self.LETTER + ['_']:
                 sub_string, fact, c = self.is_id(sub_string, c)
