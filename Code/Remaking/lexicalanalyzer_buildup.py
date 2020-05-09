@@ -584,7 +584,17 @@ class LexicalAnalyzer(object):
                     elif (c == '.') or (sub_string == '.'):
                         error_noti = "Line" + str(line_num) + ": Wrong input stream"
                         print(error_noti)
+                        # Open file for writing Error
+                        try:
+                            f = open(file_name[:-2] + '_error.out', 'w')
+                        except:
+                            print("Fail to write file")
+                            exit()
+                        for i in error_noti:
+                            f.writelines(i)
+                        f.close()
                         exit()
+
                     else:
                         symbol_table.append(['FLOAT', sub_string])
                         sub_string = ""
