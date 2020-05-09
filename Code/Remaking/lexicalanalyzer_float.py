@@ -126,138 +126,170 @@ class LexicalAnalyzer(object):
         state = ["T0", "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9"]
         recentState = state[0]
 
-        sub_string = ""
-        input = input_string
+        sub_string1 = ""
+        sub_string2 = ""
+        buf_string = input_string
+
+        if len(input_string) == 1:
+            input = input_string
+            input_string = ""
+        read_flag = True
 
         while(True):
+            if len(input_string) > 1:
+                if len(buf_string)!=0:
+                    input = buf_string[0]
+                    buf_string = buf_string[1:]
+                    read_flag = False
+                if len(buf_string)==0:
+                    read_flag = True
+
+            if recentState == state[7] or recentState == state[8]:
+                sub_string1 = sub_string2
+
             if recentState == state[0]:
                 if input == "-":
                     recentState = state[1]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string1 = sub_string1 + input
+                    sub_string2 = sub_string1
+                    if read_flag: input = self.input_stream.read(1)
                 elif input in self.ZERO:
                     recentState = state[2]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string1 = sub_string1 + input
+                    sub_string2 = sub_string1
+                    if read_flag: input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[3]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string1 = sub_string1 + input
+                    sub_string2 = sub_string1
+                    if read_flag: input = self.input_stream.read(1)
                 else:
-                    return sub_string, False, input
+                    buf = sub_string2.replace(sub_string1, "", 1)
+                    return sub_string1, False, (buf + input)
             elif recentState == state[1]:
                 if input in self.ZERO:
                     recentState = state[2]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[3]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 else:
-                    return sub_string, False, input
+                    buf = sub_string2.replace(sub_string1, "", 1)
+                    return sub_string1, False, (buf + input)
             elif recentState == state[2]:
                 if input == ".":
                     recentState = state[4]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 else:
-                    return sub_string, False, input
+                    buf = sub_string2.replace(sub_string1, "", 1)
+                    return sub_string1, False, (buf + input)
             elif recentState == state[3]:
                 if input in self.ZERO:
                     recentState = state[5]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 elif input == ".":
                     recentState = state[4]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[6]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 else:
-                    return sub_string, False, input
+                    buf = sub_string2.replace(sub_string1, "", 1)
+                    return sub_string1, False, (buf + input)
             elif recentState == state[4]:
                 if input in self.ZERO:
                     recentState = state[7]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[8]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 else:
-                    return sub_string, False, input
+                    buf = sub_string2.replace(sub_string1, "", 1)
+                    return sub_string1, False, (buf + input)
             elif recentState == state[5]:
                 if input in self.ZERO:
                     recentState = state[5]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 elif input == ".":
                     recentState = state[4]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[6]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 else:
-                    return sub_string, False, input
+                    buf = sub_string2.replace(sub_string1, "", 1)
+                    return sub_string1, False, (buf + input)
             elif recentState == state[6]:
                 if input in self.ZERO:
                     recentState = state[5]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 elif input == ".":
                     recentState = state[4]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[6]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 else:
-                    return sub_string, False, input
+                    buf = sub_string2.replace(sub_string1, "", 1)
+                    return sub_string1, False, (buf + input)
             elif recentState == state[7]:
                 if input in self.ZERO:
                     recentState = state[9]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[8]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 else:
-                    return sub_string, True, input
+                    return sub_string1, True, input
             elif recentState == state[8]:
                 if input in self.ZERO:
                     recentState = state[9]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    sub_string1 = sub_string2
+                    if read_flag: input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[8]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    sub_string1 = sub_string2
+                    if read_flag: input = self.input_stream.read(1)
                 else:
-                    return sub_string, True, input
+                    return sub_string1, True, input
             elif recentState == state[9]:
                 if input in self.ZERO:
                     recentState = state[9]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 elif input in self.NON_ZERO:
                     recentState = state[8]
-                    sub_string = sub_string + input
-                    input = self.input_stream.read(1)
+                    sub_string2 = sub_string2 + input
+                    if read_flag: input = self.input_stream.read(1)
                 else:
-                    return sub_string, False, input
+                    buf = sub_string2.replace(sub_string1, "", 1)
+                    return sub_string1, False, (buf+input)
             if input not in (self.DIGIT + ['.']):
                 break
         if recentState == state[7] or recentState == state[8]:
-            return sub_string, True, input
+            sub_string1 = sub_string2
+            return sub_string1, True, input
         else:
-            return sub_string, False, input
+            buf = sub_string2.replace(sub_string1, "", 1)
+            return sub_string1, False, (buf+input)
 
     # Literal DFA
     def is_string(self, input_string, char):
@@ -310,7 +342,7 @@ class LexicalAnalyzer(object):
                 flag = True
 
             # EOF
-            if c == "":
+            if (c == "") and (sub_string == ""):
                 break
 
             # Test the character is in the alphabet
@@ -457,7 +489,7 @@ class LexicalAnalyzer(object):
                 continue
 
             # FLOAT
-            if sub_string in self.DIGIT + ['-', '.']:
+            if sub_string[0] in self.DIGIT + ['-', '.']:
                 sub_string, fact, c = self.is_float(sub_string, c)
 
                 if fact:
@@ -467,10 +499,20 @@ class LexicalAnalyzer(object):
                     if sub_string=='-':
                         symbol_table.append(['OPERATOR', sub_string])
                         sub_string = ""
+                    elif len(c) > 0:
+                        symbol_table.append(['FLOAT', sub_string])
+                        sub_string = c
+                        c = ""
+                        flag = True
+                        continue
                     else:
+                        symbol_table.append(['FLOAT', sub_string])
+                        sub_string = ""
+                        continue
+                    '''else:
                         error_noti = "Line" + str(line_num) + ": Wrong input stream"
                         print(error_noti)
-                        exit()
+                        exit()'''
 
                 if c != "":
                     flag = False
