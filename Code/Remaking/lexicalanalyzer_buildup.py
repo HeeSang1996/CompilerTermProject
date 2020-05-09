@@ -367,7 +367,7 @@ class LexicalAnalyzer(object):
                 flag = True
 
             # EOF
-            if c == "":
+            if (c == "") and (sub_string == ""):
                 break
 
             # Test the character is in the alphabet
