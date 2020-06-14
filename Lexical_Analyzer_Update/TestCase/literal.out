@@ -1,0 +1,26 @@
+id void
+id main
+lparen (
+rparen )
+lbrace {
+vtype char
+id a
+assign =
+literal "123"
+semi ;
+vtype char
+id b
+assign =
+literal "abc"
+semi ;
+vtype char
+id c
+assign =
+literal " "
+semi ;
+vtype char
+id d
+assign =
+literal "Hello World 123"
+semi ;
+rbrace }

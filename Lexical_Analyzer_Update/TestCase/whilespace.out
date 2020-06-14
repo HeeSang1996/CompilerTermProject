@@ -1,0 +1,9 @@
+vtype int
+id main
+lparen (
+rparen )
+lbrace {
+return return
+num 0
+semi ;
+rbrace }

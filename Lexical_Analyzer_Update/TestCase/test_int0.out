@@ -1,0 +1,15 @@
+vtype int
+id main
+lparen (
+rparen )
+lbrace {
+vtype int
+id a
+assign =
+num 0
+num 13
+semi ;
+return return
+num 0
+semi ;
+rbrace }
