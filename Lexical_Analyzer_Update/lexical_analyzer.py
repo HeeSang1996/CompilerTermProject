@@ -523,7 +523,16 @@ class LexicalAnalyzer(object):
                 elif sub_string in self.COMMA:
                     symbol_table.append(['comma', sub_string])
                 elif sub_string in self.OPERATOR:
-                    symbol_table.append(['OPERATOR', sub_string])
+                    if sub_string == '+':
+                        symbol_table.append(['addsub', sub_string])
+                    elif sub_string == '-':
+                        symbol_table.append(['addsub', sub_string])
+                    elif sub_string == '*':
+                        symbol_table.append(['multdiv', sub_string])
+                    elif sub_string == '/':
+                        symbol_table.append(['multdiv', sub_string])
+                    else:
+                        symbol_table.append(['OPERATOR', sub_string])
                 elif sub_string in self.COMPARISON:
                     symbol_table.append(['comp', sub_string])
                 sub_string = ""
@@ -576,7 +585,7 @@ class LexicalAnalyzer(object):
                     sub_string = ""
                 else:
                     if sub_string=='-':
-                        symbol_table.append(['OPERATOR', sub_string])
+                        symbol_table.append(['addsub', sub_string])
                         sub_string = ""
                     elif (len(c) > 0) and (len(sub_string)!=0):
                         symbol_table.append(['float', sub_string])
