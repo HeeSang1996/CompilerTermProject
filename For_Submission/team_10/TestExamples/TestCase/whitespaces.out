@@ -1,9 +1,0 @@
-VARIABLE int
-ID main
-PAREN (
-PAREN )
-BRACE {
-KEYWORD return
-INT 0
-TERM ;
-BRACE }
