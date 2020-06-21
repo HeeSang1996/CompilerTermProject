@@ -1,0 +1,39 @@
+Goal ->CODE
+CODE->VDECL CODE | FDECL CODE | ϵ
+VDECL->vtype id semi | vtype ASSIGN semi
+ASSIGN->id assign RHS
+ FDECL->vtype id lparen ARG rparen lbrace BLOCK RETURN rbrace
+ARG->vtype id MOREARGS | ϵ
+MOREARGS->comma vtype id MOREARGS | ϵ 
+BLOCK->STMT BLOCK | ϵ 
+STMT->VDECL | ASSIGN semi 
+STMT->if lparen COND rparen lbrace BLOCK rbrace ELSE
+STMT->while lparen COND rparen lbrace BLOCK rbrace
+STMT->for lparen ASSIGN semi COND semi ASSIGN rparen lbrace BLOCK rbrace
+ELSE->else lbrace BLOCK rbrace | ϵ 
+RHS->EXPR | literal 
+EXPR->TERM addsub EXPR | TERM
+TERM->FACTOR multdiv TERM | FACTOR
+FACTOR->lparen EXPR rparen | id | num | float 
+COND->FACTOR comp FACTOR 
+RETURN->return FACTOR semi
+
+Goal ->CODE
+CODE->VDECL CODE | FDECL CODE | EPSILON
+VDECL->vtype id semi | vtype ASSIGN semi
+ASSIGN->id assign RHS
+ FDECL->vtype id lparen ARG rparen lbrace BLOCK RETURN rbrace
+ARG->vtype id MOREARGS | EPSILON
+MOREARGS->comma vtype id MOREARGS | EPSILON
+BLOCK->STMT BLOCK | EPSILON
+STMT->VDECL | ASSIGN semi 
+STMT->if lparen COND rparen lbrace BLOCK rbrace ELSE
+STMT->while lparen COND rparen lbrace BLOCK rbrace
+STMT->for lparen ASSIGN semi COND semi ASSIGN rparen lbrace BLOCK rbrace
+ELSE->else lbrace BLOCK rbrace | EPSILON
+RHS->EXPR | literal 
+EXPR->TERM addsub EXPR | TERM
+TERM->FACTOR multdiv TERM | FACTOR
+FACTOR->lparen EXPR rparen | id | num | float 
+COND->FACTOR comp FACTOR 
+RETURN->return FACTOR semi
