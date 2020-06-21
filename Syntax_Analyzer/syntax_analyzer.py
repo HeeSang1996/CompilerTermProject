@@ -12,7 +12,7 @@ class SyntaxAnalyzer(object):
 
     def run(self):
 
-        
+
         return True
 
 # Main function
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     f.close()
 
     # Result
-    if sa:
+    if result:
         print("Accepted")
     else:
         print("Reject")
