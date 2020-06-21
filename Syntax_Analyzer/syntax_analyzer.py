@@ -3,14 +3,26 @@ import os
 
 class SyntaxAnalyzer(object):
 
-    # input text file
-    input_stream = None
+    # Variables
+    file = None         # input text file
+    terminal_list = []     # input terminal
 
     def __init__(self, file):
         # Get text file
-        self.input_stream = file
+        self.file = file
+
+    def readFile(self):
+        lines = self.file.readlines()
+        for line in lines:
+            terminal = line.split()[0]
+            self.terminal_list.append(terminal)
+
+            # Print for debugging
+            print(terminal)
 
     def run(self):
+        # Read file
+        self.readFile()
 
 
         return True
