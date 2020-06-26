@@ -162,7 +162,7 @@ class SyntaxAnalyzer(object):
         # Read file
         self.readFile()
         #only includes end mark
-        if (len(self..terminal_list)):
+        if (len(self.terminal_list)==1):
             return True
         
         #Print for debugging
