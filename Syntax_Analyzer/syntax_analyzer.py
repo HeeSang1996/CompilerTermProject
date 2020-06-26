@@ -13,10 +13,10 @@ class SyntaxAnalyzer(object):
                      ,'RHS','EXPR','TERM','FACTOR','COND','RETURN','ELSE']
 
     #epsilon
-    EPSILON = ['epsilon']
+    EPSILON ='epsilon'
 
     #end mark
-    END_MARK = ['$']
+    END_MARK ='$'
 
     #rules
     RULES = {'0':'S → CODE',
@@ -156,10 +156,15 @@ class SyntaxAnalyzer(object):
 
             #Print for debugging
             #print(terminal)
+        self.terminal_list.append(self.END_MARK)
 
     def run(self):
         # Read file
         self.readFile()
+        #only includes end mark
+        if (len(self..terminal_list)):
+            return True
+        
         #Print for debugging
         print(self.terminal_list)
         #Print for debugging
