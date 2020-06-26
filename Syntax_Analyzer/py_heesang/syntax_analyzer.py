@@ -143,6 +143,7 @@ class SyntaxAnalyzer(object):
     # Variables
     file = None         # input text file
     terminal_list = []     # input terminal
+    line_num = 0
     
     def __init__(self, file):
         # Get text file
@@ -160,12 +161,14 @@ class SyntaxAnalyzer(object):
         self.readFile()
         #only includes end mark
         if (len(self.terminal_list)==1):
-            return True
+            return True, -1
 
         SLR_stack = [0]         #stack
         spliter_pos = 0  #position of spliter
 
         while (True):
+            # Count line
+            self.line_num = self.line_num + 1
             #current state
             current_state = SLR_stack[-1]
             
@@ -174,7 +177,7 @@ class SyntaxAnalyzer(object):
             #next input symbol shoud be in SLR_TABLE
             #if not, error
             if next_input_symbol not in self.SLR_TABLE[current_state].keys():
-                return False
+                return False, self.line_num
 
             #shift
             if (self.SLR_TABLE[current_state][next_input_symbol][0]=='S'):
@@ -204,9 +207,9 @@ class SyntaxAnalyzer(object):
                 self.terminal_list.insert(spliter_pos-1,buf_rule[0])
                 current_state = SLR_stack[-1]
                 if((buf_rule[0] =='S') and (len(self.terminal_list)==2) and (spliter_pos==1)):
-                    return True
+                    return True, -1
                 if buf_rule[0] not in self.SLR_TABLE[current_state].keys():
-                    return False
+                    return False, self.line_num
                 SLR_stack.append(self.SLR_TABLE[current_state][buf_rule[0]])
             '''==============================='''
             #Print for debugging
@@ -240,7 +243,7 @@ if __name__ == "__main__":
         exit()
     
     sa = SyntaxAnalyzer(f)
-    result = sa.run()
+    result, line = sa.run()
 
     # Close the file
     f.close()
@@ -249,6 +252,6 @@ if __name__ == "__main__":
     if result:
         print("Accepted")
     else:
-        print("Reject")
+        print("Reject: error #" + line)
 
     
