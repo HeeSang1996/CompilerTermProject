@@ -174,14 +174,6 @@ class SyntaxAnalyzer(object):
             
             #next input symbol is deicded by position of spliter
             next_input_symbol = self.terminal_list[spliter_pos]
-            #Print for debugging
-            print(next_input_symbol)
-            #Print for debugging
-            print(current_state)
-            #Print for debugging
-            print(spliter_pos)
-            #Print for debugging
-            print(self.terminal_list)
             #next input symbol shoud be in SLR_TABLE
             #if not, error
             if next_input_symbol not in self.SLR_TABLE[current_state].keys():
@@ -214,11 +206,15 @@ class SyntaxAnalyzer(object):
                 #revise terminal list
                 self.terminal_list.insert(spliter_pos-1,buf_rule[0])
                 current_state = SLR_stack[-1]
+                #Print for debugging
+                print(self.terminal_list)
+                #Print for debugging
                 print(SLR_stack)
+                if((buf_rule[0] =='S') and (len(self.terminal_list)==2) and (spliter_pos==1)):
+                    return True
+                if buf_rule[0] not in self.SLR_TABLE[current_state].keys():
+                    return False
                 SLR_stack.append(self.SLR_TABLE[current_state][buf_rule[0]])
-            #type is int only with non-terminal, goto
-            #if type(SLR_TABLE[current_state][next_input_symbol]) == int:
-        return True
 
 # Main function
 if __name__ == "__main__":
