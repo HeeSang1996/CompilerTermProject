@@ -203,15 +203,21 @@ class SyntaxAnalyzer(object):
                 #revise terminal list
                 self.terminal_list.insert(spliter_pos-1,buf_rule[0])
                 current_state = SLR_stack[-1]
-                #Print for debugging
-                print(self.terminal_list)
-                #Print for debugging
-                print(SLR_stack)
                 if((buf_rule[0] =='S') and (len(self.terminal_list)==2) and (spliter_pos==1)):
                     return True
                 if buf_rule[0] not in self.SLR_TABLE[current_state].keys():
                     return False
                 SLR_stack.append(self.SLR_TABLE[current_state][buf_rule[0]])
+            '''==============================='''
+            #Print for debugging
+            for i,v in enumerate(self.terminal_list):
+                if i == spliter_pos:
+                    print(end = ' | ')
+                print(v, end = ' ')
+            print()
+            #Print for debugging
+            print('Stack: ', SLR_stack)
+            '''==============================='''
 
 # Main function
 if __name__ == "__main__":
