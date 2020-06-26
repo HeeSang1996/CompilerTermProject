@@ -153,9 +153,6 @@ class SyntaxAnalyzer(object):
         for line in lines:
             terminal = line.split()[0]
             self.terminal_list.append(terminal)
-
-            #Print for debugging
-            #print(terminal)
         self.terminal_list.append(self.END_MARK)
 
     def run(self):
