@@ -153,7 +153,7 @@ class SyntaxAnalyzer(object):
         self.readFile()
         #only includes end mark
         if (len(self.terminal_list)==1):
-            return True
+            return True, ''
 
         SLR_stack = [0]         #stack
         spliter_pos = 0  #position of spliter
@@ -168,8 +168,9 @@ class SyntaxAnalyzer(object):
             #next input symbol shoud be in SLR_TABLE
             #if not, error
             if next_input_symbol not in self.SLR_TABLE[current_state].keys():
-                print("Error occurred in line "+str(error_line) + ", " + self.list_for_error_check[error_line-1])
-                return False
+                report = "Error occurred in line "+str(error_line) + ", " + self.list_for_error_check[error_line-1]
+                print(report)
+                return False, report
 
             #shift
             if (self.SLR_TABLE[current_state][next_input_symbol][0]=='S'):
@@ -202,10 +203,11 @@ class SyntaxAnalyzer(object):
                 #Print for debugging
                 #print(self.terminal_list)
                 if((buf_rule[0] =='S') and (len(self.terminal_list)==2) and (spliter_pos==1)):
-                    return True
+                    return True, ''
                 if buf_rule[0] not in self.SLR_TABLE[current_state].keys():
-                    print("Error occurred in line "+str(error_line) + ", " + self.list_for_error_check[error_line-1])
-                    return False
+                    report = "Error occurred in line "+str(error_line) + ", " + self.list_for_error_check[error_line-1]
+                    print(report)
+                    return False, report
                 SLR_stack.append(self.SLR_TABLE[current_state][buf_rule[0]])
 
 # Main function
@@ -229,7 +231,7 @@ if __name__ == "__main__":
         exit()
     
     sa = SyntaxAnalyzer(f)
-    result = sa.run()
+    result, report = sa.run()
 
     # Close the file
     f.close()
@@ -239,5 +241,15 @@ if __name__ == "__main__":
         print("Accepted")
     else:
         print("Reject")
+
+        # Open file for writing result
+        try:
+            f = open(file_name[:-3]+'_error.out', 'w')
+        except:
+            print("Fail to write file")
+            exit()
+        f.f.writelines(report + '\n')
+        f.close()
+        
 
     
