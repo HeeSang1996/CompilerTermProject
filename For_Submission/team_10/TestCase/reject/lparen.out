@@ -1,0 +1,14 @@
+vtype int
+id main
+lparen (
+rparen )
+lparen (
+vtype int
+id logic
+assign =
+LOGIC true
+semi ;
+return return
+num 0
+semi ;
+rbrace }
