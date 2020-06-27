@@ -143,7 +143,7 @@ class SyntaxAnalyzer(object):
     # Variables
     file = None         # input text file
     terminal_list = []     # input terminal
-    line_num = 0
+    list_for_error_check = []
     
     def __init__(self, file):
         # Get text file
@@ -154,6 +154,10 @@ class SyntaxAnalyzer(object):
         for line in lines:
             terminal = line.split()[0]
             self.terminal_list.append(terminal)
+
+            #Print for debugging
+            #print(terminal)
+        self.list_for_error_check = self.terminal_list
         self.terminal_list.append(self.END_MARK)
 
     def run(self):
@@ -161,14 +165,13 @@ class SyntaxAnalyzer(object):
         self.readFile()
         #only includes end mark
         if (len(self.terminal_list)==1):
-            return True, -1
+            return True
 
         SLR_stack = [0]         #stack
         spliter_pos = 0  #position of spliter
+        error_line = 1
 
         while (True):
-            # Count line
-            self.line_num = self.line_num + 1
             #current state
             current_state = SLR_stack[-1]
             
@@ -177,12 +180,14 @@ class SyntaxAnalyzer(object):
             #next input symbol shoud be in SLR_TABLE
             #if not, error
             if next_input_symbol not in self.SLR_TABLE[current_state].keys():
-                return False, self.line_num
+                print("Error occurred in line "+str(error_line))
+                return False
 
             #shift
             if (self.SLR_TABLE[current_state][next_input_symbol][0]=='S'):
                 #move position of spliter
                 spliter_pos = spliter_pos +1
+                error_line = error_line +1
                 #push stack to next state
                 SLR_stack.append(int(self.SLR_TABLE[current_state][next_input_symbol][1:]))
             #reduce
@@ -206,11 +211,14 @@ class SyntaxAnalyzer(object):
                 #revise terminal list
                 self.terminal_list.insert(spliter_pos-1,buf_rule[0])
                 current_state = SLR_stack[-1]
+
                 if((buf_rule[0] =='S') and (len(self.terminal_list)==2) and (spliter_pos==1)):
-                    return True, -1
+                    return True
                 if buf_rule[0] not in self.SLR_TABLE[current_state].keys():
-                    return False, self.line_num
+                    print("Error occurred in line "+str(error_line))
+                    return False
                 SLR_stack.append(self.SLR_TABLE[current_state][buf_rule[0]])
+            
             '''==============================='''
             #Print for debugging
             for i,v in enumerate(self.terminal_list):
@@ -243,7 +251,7 @@ if __name__ == "__main__":
         exit()
     
     sa = SyntaxAnalyzer(f)
-    result, line = sa.run()
+    result = sa.run()
 
     # Close the file
     f.close()
@@ -252,6 +260,6 @@ if __name__ == "__main__":
     if result:
         print("Accepted")
     else:
-        print("Reject: error #" + line)
+        print("Reject")
 
     
