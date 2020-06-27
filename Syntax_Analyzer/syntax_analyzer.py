@@ -1,20 +1,8 @@
 import sys
 import os
+import copy
 
 class SyntaxAnalyzer(object):
-
-    #terminals
-    TERMINALS = ['vtype','num','float','literal','id','if','else','while','for',
-                 'return','addsub','multdiv','assign','comp','semi','comma',
-                 'lparen','rparen','lbrace','rbrace']
-    
-    #non-terminals
-    NON_TERMINALS = ['CODE','VDECL','FDECL','ARG','MOREARGS','BLOCK','STMT','ASSIGN'
-                     ,'RHS','EXPR','TERM','FACTOR','COND','RETURN','ELSE']
-
-    #epsilon
-    EPSILON ='epsilon'
-
     #end mark
     END_MARK ='$'
 
@@ -143,7 +131,8 @@ class SyntaxAnalyzer(object):
     # Variables
     file = None         # input text file
     terminal_list = []     # input terminal
-
+    list_for_error_check = []
+    
     def __init__(self, file):
         # Get text file
         self.file = file
@@ -157,6 +146,7 @@ class SyntaxAnalyzer(object):
             #Print for debugging
             #print(terminal)
         self.terminal_list.append(self.END_MARK)
+        self.list_for_error_check = copy.deepcopy(self.terminal_list)
 
     def run(self):
         # Read file
@@ -164,16 +154,59 @@ class SyntaxAnalyzer(object):
         #only includes end mark
         if (len(self.terminal_list)==1):
             return True
-        
-        #Print for debugging
-        print(self.terminal_list)
-        #Print for debugging
-        print(len(self.TERMINALS))
-        #Print for debugging
-        print(len(self.NON_TERMINALS))
-        #Print for debugging
-        print(len(self.RULES))
-        return True
+
+        SLR_stack = [0]         #stack
+        spliter_pos = 0  #position of spliter
+        error_line = 1
+
+        while (True):
+            #current state
+            current_state = SLR_stack[-1]
+            
+            #next input symbol is deicded by position of spliter
+            next_input_symbol = self.terminal_list[spliter_pos]
+            #next input symbol shoud be in SLR_TABLE
+            #if not, error
+            if next_input_symbol not in self.SLR_TABLE[current_state].keys():
+                print("Error occurred in line "+str(error_line) + ", " + self.list_for_error_check[error_line-1])
+                return False
+
+            #shift
+            if (self.SLR_TABLE[current_state][next_input_symbol][0]=='S'):
+                #move position of spliter
+                spliter_pos = spliter_pos +1
+                error_line = error_line +1
+                #push stack to next state
+                SLR_stack.append(int(self.SLR_TABLE[current_state][next_input_symbol][1:]))
+            #reduce
+            elif (self.SLR_TABLE[current_state][next_input_symbol][0]=='R'):
+                #remove ( , ) to use int
+                buf_string = self.SLR_TABLE[current_state][next_input_symbol][1:].replace("(","")
+                buf_string = buf_string.replace(")","")
+                #get rule , type is list
+                buf_rule = self.RULES[buf_string].split()
+                buf_length = len(buf_rule) - 2 # ex) 'STMT → VDECL' , we only need VDECL
+                #revise terminal list
+                for i in range(buf_length):
+                    if (buf_rule[2] != 'epsilon'):#if not epsilon
+                        #pop out from stack
+                        SLR_stack.pop()
+                        self.terminal_list.pop(spliter_pos - i - 1)
+                if (buf_rule[2] != 'epsilon'):#if not epsilon
+                    spliter_pos = spliter_pos - buf_length +1
+                else:#if epsilon
+                    spliter_pos = spliter_pos+1
+                #revise terminal list
+                self.terminal_list.insert(spliter_pos-1,buf_rule[0])
+                current_state = SLR_stack[-1]
+                #Print for debugging
+                #print(self.terminal_list)
+                if((buf_rule[0] =='S') and (len(self.terminal_list)==2) and (spliter_pos==1)):
+                    return True
+                if buf_rule[0] not in self.SLR_TABLE[current_state].keys():
+                    print("Error occurred in line "+str(error_line) + ", " + self.list_for_error_check[error_line-1])
+                    return False
+                SLR_stack.append(self.SLR_TABLE[current_state][buf_rule[0]])
 
 # Main function
 if __name__ == "__main__":
