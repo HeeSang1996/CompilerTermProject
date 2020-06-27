@@ -248,7 +248,7 @@ if __name__ == "__main__":
         except:
             print("Fail to write file")
             exit()
-        f.f.writelines(report + '\n')
+        f.writelines(report + '\n')
         f.close()
         
 
