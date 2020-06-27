@@ -1,20 +1,8 @@
 import sys
 import os
+import copy
 
 class SyntaxAnalyzer(object):
-
-    #terminals
-    TERMINALS = ['vtype','num','float','literal','id','if','else','while','for',
-                 'return','addsub','multdiv','assign','comp','semi','comma',
-                 'lparen','rparen','lbrace','rbrace']
-    
-    #non-terminals
-    NON_TERMINALS = ['CODE','VDECL','FDECL','ARG','MOREARGS','BLOCK','STMT','ASSIGN'
-                     ,'RHS','EXPR','TERM','FACTOR','COND','RETURN','ELSE']
-
-    #epsilon
-    EPSILON ='epsilon'
-
     #end mark
     END_MARK ='$'
 
@@ -157,8 +145,8 @@ class SyntaxAnalyzer(object):
 
             #Print for debugging
             #print(terminal)
-        self.list_for_error_check = self.terminal_list
         self.terminal_list.append(self.END_MARK)
+        self.list_for_error_check = copy.deepcopy(self.terminal_list)
 
     def run(self):
         # Read file
@@ -180,7 +168,7 @@ class SyntaxAnalyzer(object):
             #next input symbol shoud be in SLR_TABLE
             #if not, error
             if next_input_symbol not in self.SLR_TABLE[current_state].keys():
-                print("Error occurred in line "+str(error_line))
+                print("Error occurred in line "+str(error_line) + ", " + self.list_for_error_check[error_line-1])
                 return False
 
             #shift
@@ -212,13 +200,11 @@ class SyntaxAnalyzer(object):
                 self.terminal_list.insert(spliter_pos-1,buf_rule[0])
                 current_state = SLR_stack[-1]
                 #Print for debugging
-                print(self.terminal_list)
-                #Print for debugging
-                print(SLR_stack)
+                #print(self.terminal_list)
                 if((buf_rule[0] =='S') and (len(self.terminal_list)==2) and (spliter_pos==1)):
                     return True
                 if buf_rule[0] not in self.SLR_TABLE[current_state].keys():
-                    print("Error occurred in line "+str(error_line))
+                    print("Error occurred in line "+str(error_line) + ", " + self.list_for_error_check[error_line-1])
                     return False
                 SLR_stack.append(self.SLR_TABLE[current_state][buf_rule[0]])
 
