@@ -1,0 +1,11 @@
+vtype int
+id main
+lparen (
+rparen )
+lbrace {
+vtype int
+id logic
+assign =
+num 3
+semi ;
+rbrace }

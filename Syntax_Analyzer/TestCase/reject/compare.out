@@ -1,0 +1,16 @@
+vtype int
+id main
+lparen (
+rparen )
+lbrace {
+vtype float
+id logic
+assign =
+num 3
+comp <
+num 4
+semi ;
+return return
+num 0
+semi ;
+rbrace }
