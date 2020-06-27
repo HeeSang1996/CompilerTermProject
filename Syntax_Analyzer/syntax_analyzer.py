@@ -244,7 +244,7 @@ if __name__ == "__main__":
 
         # Open file for writing result
         try:
-            f = open(file_name[:-3]+'_error.out', 'w')
+            f = open(file_name[:-4]+'_error.out', 'w')
         except:
             print("Fail to write file")
             exit()
